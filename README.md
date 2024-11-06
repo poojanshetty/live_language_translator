@@ -14,7 +14,7 @@ This application allows you to translate spoken language into another language a
 
 ## Supported Languages
 
-The application currently supports the following languages:
+The application currently supports the following languages translation:
 
     'af': 'Afrikaans',
     'sq': 'Albanian',
@@ -181,14 +181,11 @@ pipenv shell
 ```bash
 python your_script_name.py
 ```
-
-6. Select the target language for translation from the list provided.
-
-7. Speak into the microphone when prompted.
-
-The application will recognize your speech, translate it into the selected language, and play the translated audio.
-
-Say "exit" to close the application.
+## What does this application do?
+- Select the target language code from the given list for translation.
+- Speak into the microphone when prompted "Speak now...".
+- The application will recognize your speech and which language you speak to the microphone, translate any language you speak into the selected/available language, and play the translation in audio.
+- Say "exit", "quit", "stop" or "end" to close the application.
 
 # Requirements
 - Python 3.6 or higher
@@ -200,7 +197,7 @@ Say "exit" to close the application.
 - License
 
 # Acknowledgments
-- SpeechRecognition for speech recognition functionality.
+- Speech recognition for speech recognition functionality.
 - Googletrans for translation.
 - gTTS for text-to-speech.
 - playsound for playing audio files.
