@@ -179,7 +179,7 @@ pipenv shell
 5. Run the application:
 
 ```bash
-python your_script_name.py
+python3 main.py
 ```
 ## What does this application do?
 - Select the target language code from the given list for translation.
