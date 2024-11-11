@@ -155,7 +155,7 @@ The application currently supports the following languages translation:
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/live_language_translator.git
+   git clone git@github.com:poojanshetty/live_language_translator.git
    cd live_language_translator
    ```
 2. Create a virtual environment:
