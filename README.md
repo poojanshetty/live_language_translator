@@ -14,27 +14,148 @@ This application allows you to translate spoken language into another language a
 
 ## Supported Languages
 
-The application currently supports the following languages:
+The application currently supports the following languages translation:
 
-1. English (`en`)
-2. Dutch (`nl`)
-3. French (`fr`)
-4. Spanish (`es`)
-5. German (`de`)
-6. Italian (`it`)
-7. Japanese (`ja`)
-8. Chinese (Simplified) (`zh-CN`)
-9. Hindi (`hi`)
-10. Arabic (`ar`)
-11. Russian (`ru`)
-12. Portuguese ('pt')
+    'af': 'Afrikaans',
+    'sq': 'Albanian',
+    'am': 'Amharic',
+    'ar': 'Arabic',
+    'hy': 'Armenian',
+    'as': 'Assamese',
+    'ay': 'Aymara',
+    'az': 'Azerbaijani',
+    'bm': 'Bambara',
+    'eu': 'Basque',
+    'be': 'Belarusian',
+    'bn': 'Bengali',
+    'bho': 'Bhojpuri',
+    'bs': 'Bosnian',
+    'bg': 'Bulgarian',
+    'ca': 'Catalan',
+    'ceb': 'Cebuano',
+    'zh-CN': 'Chinese (Simplified)',
+    'zh-TW': 'Chinese (Traditional)',
+    'co': 'Corsican',
+    'hr': 'Croatian',
+    'cs': 'Czech',
+    'da': 'Danish',
+    'dv': 'Dhivehi',
+    'doi': 'Dogri',
+    'nl': 'Dutch',
+    'en': 'English',
+    'eo': 'Esperanto',
+    'et': 'Estonian',
+    'ee': 'Ewe',
+    'fil': 'Filipino (Tagalog)',
+    'fi': 'Finnish',
+    'fr': 'French',
+    'fy': 'Frisian',
+    'gl': 'Galician',
+    'ka': 'Georgian',
+    'de': 'German',
+    'el': 'Greek',
+    'gn': 'Guarani',
+    'gu': 'Gujarati',
+    'ht': 'Haitian Creole',
+    'ha': 'Hausa',
+    'haw': 'Hawaiian',
+    'he': 'Hebrew',
+    'hi': 'Hindi',
+    'hmn': 'Hmong',
+    'hu': 'Hungarian',
+    'is': 'Icelandic',
+    'ig': 'Igbo',
+    'ilo': 'Ilocano',
+    'id': 'Indonesian',
+    'ga': 'Irish',
+    'it': 'Italian',
+    'ja': 'Japanese',
+    'jv': 'Javanese',
+    'kn': 'Kannada',
+    'kk': 'Kazakh',
+    'km': 'Khmer',
+    'rw': 'Kinyarwanda',
+    'gom': 'Konkani',
+    'ko': 'Korean',
+    'kri': 'Krio',
+    'ku': 'Kurdish',
+    'ckb': 'Kurdish (Sorani)',
+    'ky': 'Kyrgyz',
+    'lo': 'Lao',
+    'la': 'Latin',
+    'lv': 'Latvian',
+    'ln': 'Lingala',
+    'lt': 'Lithuanian',
+    'lg': 'Luganda',
+    'lb': 'Luxembourgish',
+    'mk': 'Macedonian',
+    'mai': 'Maithili',
+    'mg': 'Malagasy',
+    'ms': 'Malay',
+    'ml': 'Malayalam',
+    'mt': 'Maltese',
+    'mi': 'Maori',
+    'mr': 'Marathi',
+    'mni-Mtei': 'Meiteilon (Manipuri)',
+    'lus': 'Mizo',
+    'mn': 'Mongolian',
+    'my': 'Myanmar (Burmese)',
+    'ne': 'Nepali',
+    'no': 'Norwegian',
+    'ny': 'Nyanja (Chichewa)',
+    'or': 'Odia (Oriya)',
+    'om': 'Oromo',
+    'ps': 'Pashto',
+    'fa': 'Persian',
+    'pl': 'Polish',
+    'pt': 'Portuguese',
+    'pa': 'Punjabi',
+    'qu': 'Quechua',
+    'ro': 'Romanian',
+    'ru': 'Russian',
+    'sm': 'Samoan',
+    'sa': 'Sanskrit',
+    'gd': 'Scots Gaelic',
+    'nso': 'Sepedi',
+    'sr': 'Serbian',
+    'st': 'Sesotho',
+    'sn': 'Shona',
+    'sd': 'Sindhi',
+    'si': 'Sinhala (Sinhalese)',
+    'sk': 'Slovak',
+    'sl': 'Slovenian',
+    'so': 'Somali',
+    'es': 'Spanish',
+    'su': 'Sundanese',
+    'sw': 'Swahili',
+    'sv': 'Swedish',
+    'tl': 'Tagalog (Filipino)',
+    'tg': 'Tajik',
+    'ta': 'Tamil',
+    'tt': 'Tatar',
+    'te': 'Telugu',
+    'th': 'Thai',
+    'ti': 'Tigrinya',
+    'ts': 'Tsonga',
+    'tr': 'Turkish',
+    'tk': 'Turkmen',
+    'ak': 'Twi (Akan)',
+    'uk': 'Ukrainian',
+    'ur': 'Urdu',
+    'ug': 'Uyghur',
+    'uz': 'Uzbek',
+    'vi': 'Vietnamese',
+    'cy': 'Welsh',
+    'xh': 'Xhosa',
+    'yi': 'Yiddish',
+    'yo': 'Yoruba',
+    'zu': 'Zulu'
 
 ## Installation
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/live_language_translator.git
-   cd live_language_translator
+   git clone git@github.com:poojanshetty/live_language_translator.git
    ```
 2. Create a virtual environment:
 
@@ -57,16 +178,13 @@ pipenv shell
 5. Run the application:
 
 ```bash
-python your_script_name.py
+python3 main.py
 ```
-
-6. Select the target language for translation from the list provided.
-
-7. Speak into the microphone when prompted.
-
-The application will recognize your speech, translate it into the selected language, and play the translated audio.
-
-Say "exit" to close the application.
+## What does this application do?
+- Select the target language code from the given list for translation.
+- Speak into the microphone when prompted "Speak now...".
+- The application will recognize your speech and which language you speak to the microphone, translate any language you speak into the selected/available language, and play the translation in audio.
+- Say "exit", "quit", "stop" or "end" to close the application.
 
 # Requirements
 - Python 3.6 or higher
@@ -78,7 +196,7 @@ Say "exit" to close the application.
 - License
 
 # Acknowledgments
-- SpeechRecognition for speech recognition functionality.
+- Speech recognition for speech recognition functionality.
 - Googletrans for translation.
 - gTTS for text-to-speech.
 - playsound for playing audio files.
