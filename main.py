@@ -145,50 +145,69 @@ supported_languages = {
 }
 exit_keywords = ["exit", "quit", "stop", "end"]
 
-# Display the language options to the user
-print("Select the target language for translation:")
-for code, language in supported_languages.items():
-    print(f"{language} ({code})")
 
-# Get user's choice
-choice = input("Enter the language code for your choice: ").strip()
+def detect_language(text):
+    """Detect the language of the input text."""
+    return translator.detect(text).lang
 
-# Verify if the choice is valid
-if choice in supported_languages:
-    target_language = choice
-    print(f"Selected language: {supported_languages[choice]}")
-else:
-    print("Invalid choice. Exiting program.")
-    exit()
 
-# Translation and speech loop
-while True:
-    with sr.Microphone() as source:
-        print("Speak Now..! ")
-        audio = r.listen(source)
-        try:
-            # Recognize speech
-            speech_text = r.recognize_google(audio)
-            print("You said:", speech_text)
-            detected_lang = translator.detect(speech_text).lang
-            print("Detected language:", detected_lang)
+def translate_text(text, target_language):
+    """Translate the input text to the target language."""
+    return translator.translate(text, dest=target_language).text
 
-            if speech_text.lower() in exit_keywords:
-                print("Exiting the program.")
-                break
-        except sr.UnknownValueError:
-            print("Could not understand. Can you please repeat?")
-            continue
-        except sr.RequestError:
-            print("Could not request results from Google.")
-            continue
 
-        if speech_text:
-            translated = translator.translate(speech_text, dest=target_language)
-            translated_text = translated.text
-            print("Translated text:", translated_text)
+def text_to_speech(text, lang, filename="voice.mp3"):
+    """Convert text to speech and play it."""
+    voice = gTTS(text, lang=lang)
+    voice.save(filename)
+    playsound(filename)
+    os.remove(filename)
 
-            voice = gTTS(translated_text, lang=target_language)
-            voice.save("voice.mp3")
-            playsound("voice.mp3")
-            os.remove("voice.mp3")
+
+# Main program logic
+def main():
+    """Main translation program."""
+    print("Select the target language for translation:")
+    for code, language in supported_languages.items():
+        print(f"{language} ({code})")
+
+    # Get user's choice
+    choice = input("Enter the language code for your choice: ").strip()
+
+    # Verify if the choice is valid
+    if choice in supported_languages:
+        target_language = choice
+        print(f"Selected language: {supported_languages[choice]}")
+    else:
+        print("Invalid choice. Exiting program.")
+        exit()
+
+    # Translation and speech loop
+    while True:
+        with sr.Microphone() as source:
+            print("Speak Now..! ")
+            audio = r.listen(source)
+            try:
+                speech_text = r.recognize_google(audio)
+                print("You said:", speech_text)
+                detected_lang = detect_language(speech_text)
+                print("Detected language:", detected_lang)
+
+                if speech_text.lower() in exit_keywords:
+                    print("Exiting the program.")
+                    break
+            except sr.UnknownValueError:
+                print("Could not understand. Can you please repeat?")
+                continue
+            except sr.RequestError:
+                print("Could not request results from Google.")
+                continue
+
+            if speech_text:
+                translated_text = translate_text(speech_text, target_language)
+                print("Translated text:", translated_text)
+                text_to_speech(translated_text, target_language)
+
+
+if __name__ == "__main__":
+    main()
