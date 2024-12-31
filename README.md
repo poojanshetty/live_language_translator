@@ -14,7 +14,7 @@ This application allows you to translate spoken language into another language a
 
 ## Supported Languages
 
-The application currently supports the following languages translation:
+The application currently supports the following 134 languages translation:
 
     'af': 'Afrikaans',
     'sq': 'Albanian',
