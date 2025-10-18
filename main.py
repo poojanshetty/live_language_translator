@@ -3,9 +3,16 @@ from googletrans import Translator
 from gtts import gTTS
 from playsound import playsound
 import os
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import argparse
+from flask import send_file
+from flask import render_template
 
 r = sr.Recognizer()
 translator = Translator()
+app = Flask(__name__)
+CORS(app)
 
 supported_languages = {
     'af': 'Afrikaans',
@@ -167,12 +174,19 @@ def text_to_speech(text, lang, filename="voice.mp3"):
 # Main program logic
 def main():
     """Main translation program."""
-    print("Select the target language for translation:")
-    for code, language in supported_languages.items():
-        print(f"{language} ({code})")
+    parser = argparse.ArgumentParser(description="AI Chat Bot")
+    parser.add_argument("--lang", help="Language code for translation (e.g., 'en' for English)", required=False)
+    args = parser.parse_args()
 
-    # Get user's choice
-    choice = input("Enter the language code for your choice: ").strip()
+    if args.lang:
+        choice = args.lang
+    else:
+        print("Select the target language for translation:")
+        for code, language in supported_languages.items():
+            print(f"{language} ({code})")
+        choice = input("Enter the language code for your choice: ").strip()
+
+    print(f"Selected language: {choice}")
 
     # Verify if the choice is valid
     if choice in supported_languages:
