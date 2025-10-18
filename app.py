@@ -1,107 +1,48 @@
+import unittest
+from unittest.mock import patch, MagicMock
 import streamlit as st
-import speech_recognition as sr
-from gtts import gTTS
-from googletrans import Translator
 import tempfile
-import time
+from gtts import gTTS
+import speech_recognition as sr
+from googletrans import Translator
 
-# Page config
-st.set_page_config(page_title="Voice Translator 🌍", page_icon="🎙", layout="centered")
+# Import your app (assuming app.py is in the same folder)
+import app
 
-# Title
-st.markdown("<h1 style='text-align:center;'>🌍 Auto Voice Translator</h1>", unsafe_allow_html=True)
+class TestAppFunctions(unittest.TestCase):
 
-translator = Translator()
-recognizer = sr.Recognizer()
+    @patch.object(Translator, 'detect')
+    def test_detect_language(self, mock_detect):
+        mock_detect.return_value.lang = 'en'
+        text = "Hello world!"
+        detected_lang = app.translator.detect(text).lang
+        self.assertEqual(detected_lang, 'en')
+        mock_detect.assert_called_once_with(text)
 
-languages = {
-    'en': 'English',
-    'hi': 'Hindi',
-    'fr': 'French',
-    'es': 'Spanish',
-    'ta': 'Tamil',
-    'de': 'German',
-    'kn': 'Kannada',
-    'te': 'Telugu'
-}
+    @patch.object(Translator, 'translate')
+    def test_translate_text(self, mock_translate):
+        mock_translate.return_value.text = 'Hola mundo!'
+        text = "Hello world!"
+        target_lang = 'es'
+        translated = app.translator.translate(text, dest=target_lang).text
+        self.assertEqual(translated, 'Hola mundo!')
+        mock_translate.assert_called_once_with(text, dest=target_lang)
 
-# Session state
-if "exited" not in st.session_state:
-    st.session_state.exited = False
-if "running" not in st.session_state:
-    st.session_state.running = False
+    @patch('app.gTTS')
+    def test_tts_generation(self, mock_gTTS):
+        # Mock gTTS instance
+        mock_instance = MagicMock()
+        mock_gTTS.return_value = mock_instance
 
-if not st.session_state.exited:
+        translated_text = "Hola mundo!"
+        target_lang = 'es'
 
-    target_lang = st.selectbox(
-        "🎯 Choose Target Language",
-        options=list(languages.keys()),
-        format_func=lambda x: languages[x],
-    )
+        # Use a temporary file to simulate audio generation
+        with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as temp_file:
+            tts = gTTS(translated_text, lang=target_lang)
+            tts.save(temp_file.name)
+            mock_gTTS.assert_called_once_with(translated_text, lang=target_lang)
+            mock_instance.save.assert_called_once_with(temp_file.name)
 
-    col1, col2 = st.columns(2)
-    with col1:
-        start_btn = st.button("▶️ Start Auto Translation", key="start_btn")
-    with col2:
-        exit_btn = st.button("🚪 Exit", key="exit_btn")
-
-    if exit_btn:
-        st.session_state.exited = True
-        st.rerun()
-
-    if start_btn:
-        st.session_state.running = True
-        st.success("🎧 Auto translation started! Speak now...")
-
-        stop_placeholder = st.empty()  # placeholder for the stop button
-
-        while st.session_state.running:
-            with sr.Microphone() as source:
-                st.info("🎙 Listening...")
-                audio = recognizer.listen(source, phrase_time_limit=6)
-
-            try:
-                text = recognizer.recognize_google(audio)
-                if not text.strip():
-                    continue
-
-                st.write(f"🗣 You said: {text}")
-
-                detected_lang = translator.detect(text).lang
-                st.write(f"🌐 Detected Language: {detected_lang}")
-
-                translated = translator.translate(text, dest=target_lang).text
-                st.success(f"💬 Translated ({languages[target_lang]}): {translated}")
-
-                # Speak translation
-                with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as temp_file:
-                    tts = gTTS(translated, lang=target_lang)
-                    tts.save(temp_file.name)
-                    st.audio(temp_file.name, format="audio/mp3")
-
-                # Check stop button in placeholder (unique key each time)
-                if stop_placeholder.button("🛑 Stop Auto Translation", key=f"stop_btn_{time.time()}"):
-                    st.session_state.running = False
-                    st.rerun()
-
-                time.sleep(1.5)
-
-            except sr.UnknownValueError:
-                st.warning("🤔 Didn't catch that, please repeat...")
-                continue
-            except sr.RequestError:
-                st.error("⚠️ Speech recognition service unavailable.")
-                break
-            except Exception as e:
-                st.error(f"Unexpected error: {e}")
-                break
-
-else:
-    st.markdown("""
-        <div style='text-align:center; margin-top:50px;'>
-            <h2>👋 Thank you for using Voice Translator!</h2>
-            <p style='font-size:18px;'>You can now safely close this browser tab.</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("<hr><p style='text-align:center;'>Made with ❤️ using Streamlit</p>", unsafe_allow_html=True)
+if __name__ == '__main__':
+    unittest.main()
