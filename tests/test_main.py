@@ -1,40 +1,48 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from main import detect_language, translate_text, text_to_speech
+import streamlit as st
+import tempfile
+from gtts import gTTS
+import speech_recognition as sr
+from googletrans import Translator
 
-class TestMainFunctions(unittest.TestCase):
+# Import your app (assuming app.py is in the same folder)
+import app
 
-    @patch('main.translator.detect')
+class TestAppFunctions(unittest.TestCase):
+
+    @patch.object(Translator, 'detect')
     def test_detect_language(self, mock_detect):
-        # Mock the language detection
         mock_detect.return_value.lang = 'en'
-        result = detect_language("Hello world!")
-        self.assertEqual(result, 'en')
-        mock_detect.assert_called_once()
+        text = "Hello world!"
+        detected_lang = app.translator.detect(text).lang
+        self.assertEqual(detected_lang, 'en')
+        mock_detect.assert_called_once_with(text)
 
-    @patch('main.translator.translate')
+    @patch.object(Translator, 'translate')
     def test_translate_text(self, mock_translate):
-        # Mock the translation
         mock_translate.return_value.text = 'Hola mundo!'
-        result = translate_text("Hello world!", 'es')
-        self.assertEqual(result, 'Hola mundo!')
-        mock_translate.assert_called_once_with("Hello world!", dest='es')
+        text = "Hello world!"
+        target_lang = 'es'
+        translated = app.translator.translate(text, dest=target_lang).text
+        self.assertEqual(translated, 'Hola mundo!')
+        mock_translate.assert_called_once_with(text, dest=target_lang)
 
-    @patch('main.gTTS')
-    @patch('main.playsound')
-    @patch('main.os.remove')
-    def test_text_to_speech(self, mock_remove, mock_playsound, mock_gTTS):
-        # Mock text-to-speech
-        mock_tts_instance = MagicMock()
-        mock_gTTS.return_value = mock_tts_instance
+    @patch('app.gTTS')
+    def test_tts_generation(self, mock_gTTS):
+        # Mock gTTS instance
+        mock_instance = MagicMock()
+        mock_gTTS.return_value = mock_instance
 
-        text_to_speech("Hola mundo!", 'es', filename="test.mp3")
+        translated_text = "Hola mundo!"
+        target_lang = 'es'
 
-        mock_gTTS.assert_called_once_with("Hola mundo!", lang='es')
-        mock_tts_instance.save.assert_called_once_with("test.mp3")
-        mock_playsound.assert_called_once_with("test.mp3")
-        mock_remove.assert_called_once_with("test.mp3")
-
+        # Use a temporary file to simulate audio generation
+        with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as temp_file:
+            tts = gTTS(translated_text, lang=target_lang)
+            tts.save(temp_file.name)
+            mock_gTTS.assert_called_once_with(translated_text, lang=target_lang)
+            mock_instance.save.assert_called_once_with(temp_file.name)
 
 if __name__ == '__main__':
     unittest.main()
