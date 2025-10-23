@@ -6,6 +6,8 @@ import tempfile
 import time
 import asyncio
 import base64
+from langdetect import detect
+
 
 # Page config
 st.set_page_config(page_title="Voice Translator 🌍", page_icon="🎙", layout="centered")
@@ -13,7 +15,7 @@ st.set_page_config(page_title="Voice Translator 🌍", page_icon="🎙", layout=
 # Title
 st.markdown("<h1 style='text-align:center;'>🌍 Auto Voice Translator</h1>", unsafe_allow_html=True)
 
-translator = Translator()
+translator = GoogleTranslator(source='auto', target='en')
 recognizer = sr.Recognizer()
 
 languages = {
@@ -79,10 +81,10 @@ if not st.session_state.exited:
                     time.sleep(1.5)
                     st.rerun()
 
-                detected_lang = translator.detect(text).lang
+                detected_lang = detect(text)
                 st.write(f"🌐 Detected Language: {detected_lang}")
 
-                translated = translator.translate(text, dest=target_lang).text
+                translated = GoogleTranslator(source='auto', target=target_lang).translate(text)
                 st.success(f"💬 Translated ({languages[target_lang]}): {translated}")
 
 
