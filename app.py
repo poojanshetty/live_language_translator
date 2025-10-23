@@ -1,7 +1,7 @@
 import streamlit as st
 import speech_recognition as sr
 from gtts import gTTS
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 import tempfile
 import time
 import asyncio
