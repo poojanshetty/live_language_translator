@@ -4,6 +4,8 @@ from gtts import gTTS
 from googletrans import Translator
 import tempfile
 import time
+import asyncio
+import base64
 
 # Page config
 st.set_page_config(page_title="Voice Translator 🌍", page_icon="🎙", layout="centered")
@@ -62,10 +64,20 @@ if not st.session_state.exited:
 
             try:
                 text = recognizer.recognize_google(audio)
-                if not text.strip():
+                text = text.strip().lower()
+
+                if not text:
                     continue
 
                 st.write(f"🗣 You said: {text}")
+
+                # ✅ Voice exit command
+                if text in ["exit", "stop", "quit", "close"]:
+                    st.session_state.exited = True
+                    st.session_state.running = False
+                    st.success("👋 Exit command received. Closing translator...")
+                    time.sleep(1.5)
+                    st.rerun()
 
                 detected_lang = translator.detect(text).lang
                 st.write(f"🌐 Detected Language: {detected_lang}")
@@ -73,18 +85,30 @@ if not st.session_state.exited:
                 translated = translator.translate(text, dest=target_lang).text
                 st.success(f"💬 Translated ({languages[target_lang]}): {translated}")
 
-                # Speak translation
-                with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as temp_file:
+
+                # Speak translation (autoplay)
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_file:
                     tts = gTTS(translated, lang=target_lang)
                     tts.save(temp_file.name)
-                    st.audio(temp_file.name, format="audio/mp3")
 
-                # Check stop button in placeholder (unique key each time)
-                if stop_placeholder.button("🛑 Stop Auto Translation", key=f"stop_btn_{time.time()}"):
-                    st.session_state.running = False
-                    st.rerun()
+                    # ✅ Convert mp3 to base64 (Python 3)
+                    with open(temp_file.name, "rb") as f:
+                        b64_audio = base64.b64encode(f.read()).decode()
 
-                time.sleep(1.5)
+                    # ✅ Autoplay audio
+                    audio_html = f"""
+                        <audio autoplay>
+                            <source src="data:audio/mp3;base64,{b64_audio}" type="audio/mp3">
+                        </audio>
+                    """
+                    st.markdown(audio_html, unsafe_allow_html=True)
+
+                    # Check stop button in placeholder (unique key each time)
+                    if stop_placeholder.button("🛑 Stop Auto Translation", key=f"stop_btn_{time.time()}"):
+                        st.session_state.running = False
+                        st.rerun()
+
+                    time.sleep(1.5)
 
             except sr.UnknownValueError:
                 st.warning("🤔 Didn't catch that, please repeat...")
