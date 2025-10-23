@@ -1,13 +1,14 @@
 import streamlit as st
+import sounddevice as sd
+import numpy as np
+import tempfile
+import time
+import base64
 import speech_recognition as sr
 from gtts import gTTS
 from deep_translator import GoogleTranslator
-import tempfile
-import time
-import asyncio
-import base64
 from langdetect import detect
-
+import scipy.io.wavfile as wav
 
 # Page config
 st.set_page_config(page_title="Voice Translator 🌍", page_icon="🎙", layout="centered")
@@ -35,6 +36,15 @@ if "exited" not in st.session_state:
 if "running" not in st.session_state:
     st.session_state.running = False
 
+
+def record_audio(duration=6, samplerate=16000):
+    """Record audio from microphone using sounddevice"""
+    st.info("🎙 Listening...")
+    recording = sd.rec(int(duration * samplerate), samplerate=samplerate, channels=1, dtype='int16')
+    sd.wait()
+    return np.squeeze(recording), samplerate
+
+
 if not st.session_state.exited:
 
     target_lang = st.selectbox(
@@ -60,14 +70,20 @@ if not st.session_state.exited:
         stop_placeholder = st.empty()  # placeholder for the stop button
 
         while st.session_state.running:
-            with sr.Microphone() as source:
-                st.info("🎙 Listening...")
-                audio = recognizer.listen(source, phrase_time_limit=6)
-
             try:
-                text = recognizer.recognize_google(audio)
-                text = text.strip().lower()
+                # Record with sounddevice
+                audio_data, samplerate = record_audio(duration=6)
 
+                # Save to a temporary WAV file (for SpeechRecognition)
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_wav:
+                    wav.write(temp_wav.name, samplerate, audio_data)
+
+                # Recognize using Google Speech Recognition
+                with sr.AudioFile(temp_wav.name) as source:
+                    audio = recognizer.record(source)
+                    text = recognizer.recognize_google(audio)
+
+                text = text.strip().lower()
                 if not text:
                     continue
 
@@ -87,17 +103,14 @@ if not st.session_state.exited:
                 translated = GoogleTranslator(source='auto', target=target_lang).translate(text)
                 st.success(f"💬 Translated ({languages[target_lang]}): {translated}")
 
-
                 # Speak translation (autoplay)
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_file:
                     tts = gTTS(translated, lang=target_lang)
                     tts.save(temp_file.name)
 
-                    # ✅ Convert mp3 to base64 (Python 3)
                     with open(temp_file.name, "rb") as f:
                         b64_audio = base64.b64encode(f.read()).decode()
 
-                    # ✅ Autoplay audio
                     audio_html = f"""
                         <audio autoplay>
                             <source src="data:audio/mp3;base64,{b64_audio}" type="audio/mp3">
@@ -105,12 +118,12 @@ if not st.session_state.exited:
                     """
                     st.markdown(audio_html, unsafe_allow_html=True)
 
-                    # Check stop button in placeholder (unique key each time)
-                    if stop_placeholder.button("🛑 Stop Auto Translation", key=f"stop_btn_{time.time()}"):
-                        st.session_state.running = False
-                        st.rerun()
+                # Check stop button dynamically
+                if stop_placeholder.button("🛑 Stop Auto Translation", key=f"stop_btn_{time.time()}"):
+                    st.session_state.running = False
+                    st.rerun()
 
-                    time.sleep(1.5)
+                time.sleep(1.5)
 
             except sr.UnknownValueError:
                 st.warning("🤔 Didn't catch that, please repeat...")

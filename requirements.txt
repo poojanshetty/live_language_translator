@@ -3,4 +3,6 @@ SpeechRecognition
 gTTS
 deep-translator
 langdetect
-PyAudio @ https://files.pythonhosted.org/packages/2f/b3/0b8ad9c/pyaudio-0.2.14-cp313-cp313-manylinux_2_17_x86_64.whl
+sounddevice
+numpy
+scipy
