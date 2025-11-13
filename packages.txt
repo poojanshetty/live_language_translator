@@ -1,0 +1,5 @@
+portaudio19-dev
+python3-pyaudio
+ffmpeg
+sox
+libasound2-dev
