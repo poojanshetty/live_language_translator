@@ -1,3 +1,4 @@
+pydub
 streamlit
 SpeechRecognition
 gTTS
