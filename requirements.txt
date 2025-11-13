@@ -1,9 +1,7 @@
-pydub
 streamlit
-SpeechRecognition
-gTTS
+speechrecognition
+gtts
 deep-translator
 langdetect
-sounddevice
 numpy
-scipy
+requests
