@@ -207,7 +207,7 @@ if not st.session_state.exited:
 
         stop_placeholder = st.empty()  # placeholder for the stop button
 
-        if st.session_state.running:
+        while st.session_state.running:
             try:
                 audio = record_audio_sr()
                 text = recognizer.recognize_google(audio)
