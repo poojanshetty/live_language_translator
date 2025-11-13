@@ -173,15 +173,28 @@ def record_audio(duration=6, samplerate=16000):
 
 if not st.session_state.exited:
 
+    # Get list of all language options
+    language_options = list(languages.keys())
+
+    # SINGLE SEARCHABLE DROPDOWN - Combines both search and selection
+    st.markdown("### 🎯 Choose Target Language")
+
+    # Create the searchable selectbox with a placeholder that suggests searching
     target_lang = st.selectbox(
-        "🎯 Choose Target Language",
-        options=list(languages.keys()),
-        format_func=lambda x: languages[x],
+        "**Type to search or select from dropdown:**",
+        options=language_options,
+        format_func=lambda x: f"{languages[x]} ({x})",  # Display format
+        index=language_options.index('es'),  # Default to Spanish
+        help="Start typing to search languages. Select from the filtered results."
     )
 
+    # Show selected language confirmation
+    st.success(f"✅ **Selected:** {languages[target_lang]} ({target_lang})")
+
+    # Control buttons
     col1, col2 = st.columns(2)
     with col1:
-        start_btn = st.button("▶️ Start Auto Translation", key="start_btn")
+        start_btn = st.button("▶️ Start Auto Translation", key="start_btn", type="primary")
     with col2:
         exit_btn = st.button("🚪 Exit", key="exit_btn")
 
