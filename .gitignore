@@ -1,0 +1,10 @@
+.idea/live_language_translator.iml
+.idea/misc.xml
+.gitignore
+.idea/modules.xml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/inspectionProfiles/Project_Default.xml
+__pycache__/app.cpython-310.pyc
+.DS_Store
+mic_test.py
