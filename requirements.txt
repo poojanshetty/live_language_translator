@@ -1,7 +1,10 @@
 streamlit
 speechrecognition
+pyaudio
 gtts
 deep-translator
 langdetect
 numpy
 requests
+sounddevice
+scipy

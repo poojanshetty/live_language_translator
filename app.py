@@ -159,6 +159,7 @@ if "exited" not in st.session_state:
 if "running" not in st.session_state:
     st.session_state.running = False
 
+
 def record_audio_sr():
     """Record audio using SpeechRecognition's Microphone"""
     st.info("🎙 Listening... Speak now...")
@@ -166,7 +167,7 @@ def record_audio_sr():
     with sr.Microphone() as source:
         recognizer.adjust_for_ambient_noise(source, duration=0.5)
         audio = recognizer.listen(source, phrase_time_limit=5, timeout=10)
-    
+
     return audio
 
 
